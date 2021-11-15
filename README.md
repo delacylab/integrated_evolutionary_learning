@@ -1,1 +1,2 @@
-# IEL
+# Integrated Evolutionary Learning
+Integrated evolutionary learning provides an automated method for simultaneously accomplishing principled feature selection and hyperparameter tuning while furnishing interpretable models where the original features used to make predictions may be obtained and ranked in order of importance, even in deep learning with artificial neural networks. In this approach, the machine learning algorithm of choice is nested inside an evolutionary algorithm which selects features and hyperparameters over generations on the basis of an information function to converge on an optimal solution.
