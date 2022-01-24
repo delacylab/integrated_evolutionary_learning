@@ -138,7 +138,7 @@ with tf.device('device:GPU:0'):
     beta_1_max = parameters['beta_1'].max()
     beta_1_min = parameters['beta_1'].min()
     beta_2_max = parameters['beta_2'].max()
-    beta_2_min = parameters['beta_1'].min()
+    beta_2_min = parameters['beta_2'].min()
     
     #get specific X
     X = learn_train_warm_start
@@ -271,7 +271,7 @@ with tf.device('device:GPU:0'):
         learning_max = max(learning_pop)
         learning_min = min(learning_pop)
         beta_1_max = max(beta_1_pop)
-        beta_1_min = min(beta_2_pop)
+        beta_1_min = min(beta_1_pop)
         beta_2_max = max(beta_2_pop)
         beta_2_min = min(beta_2_pop)
     
@@ -326,8 +326,8 @@ with tf.device('device:GPU:0'):
             beta_2_first = beta_2_mating[:bisect]
             beta_2_second = beta_2_mating[bisect:]
             beta_2_mate_child = np.add(beta_2_first, beta_2_second)/2
-            beta_2_mate_child = np.where(beta_2_mate_child<0.9, 0.9, beta_1_mate_child)
-            beta_2_mate_child = np.where(beta_2_mate_child>0.999, 0.999, beta_1_mate_child)
+            beta_2_mate_child = np.where(beta_2_mate_child<0.9, 0.9, beta_2_mate_child)
+            beta_2_mate_child = np.where(beta_2_mate_child>0.999, 0.999, beta_2_mate_child)
             beta_2_mate_child = beta_2_mate_child.tolist()
     
             #determine remaining population after num_parents_mating removed from each array
@@ -519,7 +519,7 @@ with tf.device('device:GPU:0'):
               roll_std_sum = np.sum(np.diff(np.std(queue,axis=0)))
               roll_min_sum = np.sum(np.diff(np.min(queue,axis=0)))
               if roll_std_sum not in np.arange(-0.01,0.01) or roll_min_sum not in np.arange(-0.01,0.01):
-                  queue = np.delete(queue,1,1)
+                  queue = np.delete(queue,0,1)
                   #print(queue)
                   print("deleting")
                   generation += 1
