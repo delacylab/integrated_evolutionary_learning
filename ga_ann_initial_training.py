@@ -437,7 +437,7 @@ with tf.device('device:GPU:0'):
           roll_std_sum = np.sum(np.diff(np.std(queue,axis=0)))
           roll_min_sum = np.sum(np.diff(np.min(queue,axis=0)))
           if roll_std_sum not in np.arange(-0.01,0.01) or roll_min_sum not in np.arange(-0.01,0.01):
-              queue = np.delete(queue,1,1)
+              queue = np.delete(queue,0,1)
               #print(queue)
               print("deleting")
               generation += 1
