@@ -165,8 +165,15 @@ def feature_subsetter(df: pd.DataFrame,
     ####################################################################################################################
     # Step 8. Extract the eli5 importance scores from df
     ####################################################################################################################
-    feat_idx_records: list[list[int]] = df_sub['Feature_Indices'].apply(lambda x: literal_eval(x))
-    eli5_records: list[list[int]] = df_sub['eli5_Importance'].apply(lambda x: literal_eval(x))
+    if isinstance(df_sub['Feature_Indices'].values[0], list):
+        feat_idx_records: list[list[int]] = df_sub['Feature_Indices']
+    else:
+        feat_idx_records: list[list[int]] = df_sub['Feature_Indices'].apply(lambda x: literal_eval(x))
+    if isinstance(df_sub['eli5_Importance'].values[0], list):
+        eli5_records: list[list[int]] = df_sub['eli5_Importance']
+    else:
+        eli5_records: list[list[int]] = (df_sub['eli5_Importance']
+                                         .apply(lambda x: x if isinstance(x, list) else literal_eval(x)))
     feat_imp_dict: dict[int, list[float]] = defaultdict(list)
     for feat_idx_list, eli5_list in zip(feat_idx_records, eli5_records):
         assert len(feat_idx_list) == len(eli5_list)
