@@ -93,8 +93,8 @@ This section delineates the preprocessing pipeline with executable Python script
 
 The __Used on__ column above indicates when to apply the class/function. Starting with the removal of features with too many missing values in step 1, we partition the full feature dataset into a training set and a test set in step 2, then apply steps 3-6 to the training and test sets separately. Subsequently, we apply step 7 to subset the training feature dataset X<sub>train</sub> in step 7, and apply steps 8 and 9 independently on X<sub>train</sub>. In the manuscript, we identify the union of the features selected by steps 8 and 9 to form the preprocessed feature dataset. Finally, we subset the test feature dataset with the same feature subset in the preprocessed feature dataset for subseqeunt model evaluation. 
 
-# :book: References #
-Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).
+<!-- # :book: References #
+Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).-->
 
 
 # :globe_with_meridians: License #
