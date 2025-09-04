@@ -29,7 +29,7 @@ A Colab notebook will be added soon to demonstrate the modeling pipeline with fi
 
 ```python
 from IEL.Modeling.feature_subset import feature_subsetter
-from IEL.Modeling.iel import IELClassifier
+from IEL.Modeling.ielclassifier import IELClassifier
 from IEL.Modeling.ann_refit import refit_and_eval
 from IEL.Utils.data_simulator import simulate
 from IEL.Utils.plot_IEL_trend import plot_stat_trend
