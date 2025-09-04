@@ -1,5 +1,5 @@
 <div align="right">
-  Last update: 2025 September 4, 10:26 MT (by Wayne Lam)
+  Last update: 2025 September 4, 12:28 MT (by Wayne Lam)
 </div>
 <hr>
 
@@ -24,8 +24,7 @@ pip install git+https://github.com/delacylab/integrated_evolutionary_learning.gi
 ```
 
 # :page_with_curl: Sample Modeling Script #
-
-A Colab notebook will be added soon to demonstrate the modeling pipeline with finer controls over the runtime parameters.
+Check the [![IEL Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18scyVDA3VtMxgG9wDV5cxV39OO8gRYIP?usp=sharing) for the modeling pipeline with finer controls over the runtime parameters.
 
 ```python
 from IEL.Modeling.feature_subset import feature_subsetter
@@ -33,13 +32,14 @@ from IEL.Modeling.ielclassifier import IELClassifier
 from IEL.Modeling.ann_refit import refit_and_eval
 from IEL.Utils.data_simulator import simulate
 from IEL.Utils.plot_IEL_trend import plot_stat_trend
+from IEL.Utils.plot_SHAP import plot_shap_beeswarm
 
 # Step 1. Create a partitioned synthetic dataset
 X_train, X_test, y_train, y_test = simulate()
 
 # Step 2. IEL modeling
 M1 = IELClassifier()
-M1.fit(X_train, y_train, metric='Accuracy')
+M1.fit(X_train, y_train, metric='AUROC')
 result_1 = M1.get_performance()
 
 # Step 3. Visualize IEL learning progress across generations
@@ -51,14 +51,16 @@ X_train_sub, X_test_sub = X_train[: feature_subset], X_test[: feature_subset]
 
 # Step 5. Another round of IEL modeling with the warm-started feature subset
 M2 = IELClassifier()
-M2.fit(X_train_sub, y_train_sub, metric='Accuracy')
+M2.fit(X_train_sub, y_train_sub, metric='AUROC')
 result_2 = M2.get_performance()
 
 # Step 6. Refit a feedforward neural network with the best-fitting configuration
 result_final, shap = refit_and_eval(X_train_sub, X_test_sub, y_train, y_test, result_2)
 
 # Step 7. Visualize the feature importance using SHAP values
-...
+final_feature_idxs = result_final['Feature_Indices'].to_list()[0]
+X_test_final = X_test_sub[:, final_feature_idxs]
+plot_shap_beeswarm(shap=shap, X=X_test_final)
 ```
 - `Step 1` generates a synthetic partitioned dataset for binary classification. 
 - `Step 2` is the core IEL modeling step to identify the best-fitting hyperparameters (i.e., learning rate, β<sub>1</sub>, and β<sub>2</sub>) and feature subset with a user-defined performance metric. 
@@ -69,7 +71,7 @@ result_final, shap = refit_and_eval(X_train_sub, X_test_sub, y_train, y_test, re
 
 | `Image 1` | `Image 2` | `Image 3`|
 |---------|---------|---------|
-| <img width="300" height="200" alt="knee" src="https://github.com/user-attachments/assets/378c9d9e-f91c-46fb-a00c-adef12bf8122" /> | <img width="300" height="200" alt="knee" src="https://github.com/user-attachments/assets/4323badf-4738-454a-9c2f-e992f4dec9fd" /> | [Beeswarm plot to be added] |
+| <img width="300" height="200" alt="trend" src="https://github.com/user-attachments/assets/681c7cb2-b071-43fa-8c67-2ec066a8c10c" /> | <img width="300" height="200" alt="knee" src="https://github.com/user-attachments/assets/4323badf-4738-454a-9c2f-e992f4dec9fd" /> | <img width="300" height="200" alt="shap" src="https://github.com/user-attachments/assets/1bb43a22-9186-422e-b18f-6faf59e9c68c" /> |
 
 # :book: References #
 Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).
