@@ -73,6 +73,22 @@ plot_shap_beeswarm(shap=shap, X=X_test_final)
 |---------|---------|---------|
 | <img width="300" height="200" alt="trend" src="https://github.com/user-attachments/assets/681c7cb2-b071-43fa-8c67-2ec066a8c10c" /> | <img width="300" height="200" alt="knee" src="https://github.com/user-attachments/assets/4323badf-4738-454a-9c2f-e992f4dec9fd" /> | <img width="300" height="200" alt="shap" src="https://github.com/user-attachments/assets/1bb43a22-9186-422e-b18f-6faf59e9c68c" /> |
 
+# ⚙️ Data Preprocessing Pipelines (Optional) #
+
+In the manuscript "Predicting the onset of internalizing disorders in early adolescence using deep learning optimized with AI" (under review), we proposed a data preprocessing pipeline before performing IEL model fitting. This section delineates the preprocessing pipeline with executable Python scripts (stored in `IEL/Preprocessing/`). While this README only provides high-level descriptsion, users are encouraged to consult each script's _docstring_ for comprehensive explanations and the _Test run_ section for usage examples.  
+
+| | Script | Class/Function | Description |
+|---------|---------|---------|---------|
+|1.|`P1_NaN_Thresholding.py`|`remove_null`|Remove variables with a missing value percentage above a user-defined threshold.|
+|2.|`P2_Partitioning.py`|`partitioning`|Split a dataset into training and test sets for model fitting and evaluation.|
+|3.|`P3_Sample_Balancing.py`|`sample_balancing`|Balance a binary target variable, optionally matching samples by a secondary variable (e.g., gender).|  
+|4.|`P4_Winsorizing.py`|`winsorize`|Clip continuous/ordinal variables to a user-defined range of values.|
+|5.|`P5_Scaling.py`|`minMaxScale`|Scale variables to a specified range (e.g., [0, 1]) using min-max normalization.|
+|6.|`P6_Imputation.py`|`impute_nnmf` & `impute_mice`|Perform imputation via Non-Negative Matrix Factorization (NNMF), with both sklearn and a 5x faster custom PyTorch version, and via Multiple Imputation by Chained Equations (MICE).|
+|7.| | |Features filtering (to be updated)|
+|8.| | |LASSO-IEL (to be updated)|
+|9.|`P9_Boruta_Feature_Selection.py`|`BorutaClass`|Implement Boruta, an ensemble-based feature selection method using random forests. This version supports multiple hyperparameter configurations and is optimized over the original [BorutaPy implementation](https://github.com/scikit-learn-contrib/boruta_py).|
+
 # :book: References #
 Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).
 
