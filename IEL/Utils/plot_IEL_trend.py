@@ -95,8 +95,8 @@ def plot_stat_trend(df: pd.DataFrame,
              label=f'{metric} averaged across top-{n_top_models} models')
     plt.plot(df_sub['Generation'], smooth_stat, linestyle='-', lw=3, color='orange',
              label=f'Smoothened {metric} (window size={smooth_window})')
-    plt.xlabel(f'Validation {metric}', fontsize=14)
-    plt.ylabel('Generation', fontsize=14)
+    plt.ylabel(f'Validation {metric}', fontsize=14)
+    plt.xlabel('Generation', fontsize=14)
     plt.grid(alpha=0.2)
     plt.legend(loc='best')
 
