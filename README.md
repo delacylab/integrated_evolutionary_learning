@@ -87,7 +87,7 @@ This section delineates the preprocessing pipeline with executable Python script
 |4.|`P4_Winsorizing.py`|`winsorize`|Clip continuous/ordinal variables to a user-defined range of values.|
 |5.|`P5_Scaling.py`|`minMaxScale`|Scale variables to a specified range (e.g., [0, 1]) using min-max normalization.|
 |6.|`P6_Imputation.py`|`impute_nnmf` & `impute_mice`|Perform imputation via Non-Negative Matrix Factorization (NNMF), with both sklearn and a 5x faster custom PyTorch version, and via Multiple Imputation by Chained Equations (MICE).|
-|7.| | |Features filtering (to be updated)|
+|7.|`P7_Feature_Filtering.py`|`feat_filter`|Identify features with a zero test statistic with the target from three different statistical tests: (a) mutual information (for all features), (b) chi-squared (for binary features), and (c) ANOVA (for continuous and ordinal features).|
 |8.| | |LASSO-IEL (to be updated)|
 |9.|`P9_Boruta_Feature_Selection.py`|`BorutaClass`|Implement Boruta, an ensemble-based feature selection method using random forests. This version supports multiple hyperparameter configurations and is optimized over the original [BorutaPy implementation](https://github.com/scikit-learn-contrib/boruta_py).|
 
