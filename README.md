@@ -75,7 +75,9 @@ plot_shap_beeswarm(shap=shap, X=X_test_final)
 
 # ⚙️ Data Preprocessing Pipelines (Optional) #
 
-In the manuscript "Predicting the onset of internalizing disorders in early adolescence using deep learning optimized with AI" (under review), we proposed a data preprocessing pipeline before performing IEL model fitting. This section delineates the preprocessing pipeline with executable Python scripts (stored in `IEL/Preprocessing/`). While this README only provides high-level descriptsion, users are encouraged to consult each script's _docstring_ for comprehensive explanations and the _Test run_ section for usage examples.  
+In the manuscript "Predicting the onset of internalizing disorders in early adolescence using deep learning optimized with AI" (under review), we proposed a data preprocessing pipeline before performing IEL model fitting. This pipeline includes methods that remove variables with too many missing values, partition data for training/testing purposes, winsorize and scale data to avoid potential graident explosion/vanishing problems, impute data to ensure feasibility of modeling, select feature subsets to enhance model runtime performance and parismony.  
+
+This section delineates the preprocessing pipeline with executable Python scripts (stored in `IEL/Preprocessing/`). While this README only provides high-level descriptions, users are recommended to consult each script's _docstring_ for comprehensive explanations and the _Test run_ section for usage examples.  
 
 | | Script | Class/Function | Description |
 |---------|---------|---------|---------|
