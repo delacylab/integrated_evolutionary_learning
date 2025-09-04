@@ -1,5 +1,5 @@
 <div align="right">
-  Last update: 2025 September 3, 19:26 MT (by Wayne Lam)
+  Last update: 2025 September 4, 10:26 MT (by Wayne Lam)
 </div>
 <hr>
 
@@ -20,7 +20,7 @@ We provide a beta version of IEL for testing to ensure usability.
 
 **Using gitclone and pip (AVAILABLE NOW)** 
 ```
-pip install -U "git+https://github.com/delacylab/integrated_evolutionary_learning.git@review"
+pip install git+https://github.com/delacylab/integrated_evolutionary_learning.git
 ```
 
 # :page_with_curl: Sample Modeling Script #
