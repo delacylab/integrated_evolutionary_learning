@@ -72,7 +72,8 @@ def feature_subsetter(df: pd.DataFrame,
     ####################################################################################################################
     # Step 1. Identify the records with the n_top_models models in each generation
     ####################################################################################################################
-    metric_rank_str: str = [col for col in df.columns if col.startswith('Val_') and col.endswith('Rank')][0]
+    metric_rank_str: str = [col for col in df.columns if isinstance(col, str)]
+    metric_rank_str = [col for col in metric_rank_str if col.startswith('Val_') and col.endswith('Rank')][0]
     metric_str: str = metric_rank_str.replace('_Rank', '')
     assert not any(metric_str.endswith(y) for y in ['AIC', 'BIC', 'NLL']), ('Non-maximizing metric is not supported '
                                                                             'in the current release.')
