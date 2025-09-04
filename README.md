@@ -1,5 +1,5 @@
 <div align="right">
-  Last update: 2025 September 4, 15:18 MT (by Wayne Lam)
+  Last update: 2025 September 4, 15:58 MT (by Wayne Lam)
 </div>
 <hr>
 
@@ -8,7 +8,7 @@ Neural networks have been criticized for being a "black box" of sorts, where the
 
 # :paperclip: Characteristics # 
 * Adopt the [AdamW optimizer](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) for stable back-propagation in deep-learning 
-* Hyperparameter optimization through a genetic algorithm built within IEL
+* Hyperparameter optimization through an evolutionary mechanism built within IEL
 * Built-in feature selection for improvements in time and predictive performance
 * Automated modeling pipelines for classification tasks
 * Explainable AI methods empowered by SHAP value computation
@@ -18,13 +18,12 @@ Neural networks have been criticized for being a "black box" of sorts, where the
 
 We provide a beta version of IEL for testing to ensure usability. 
 
-**Using gitclone and pip (AVAILABLE NOW)** 
+**Using git and pip** 
 ```
 pip install git+https://github.com/delacylab/integrated_evolutionary_learning.git
 ```
 
 # :page_with_curl: Sample Modeling Script #
-Check the [![IEL Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18scyVDA3VtMxgG9wDV5cxV39OO8gRYIP?usp=sharing) for the modeling pipeline with finer controls over the runtime parameters.
 
 ```python
 from IEL.Modeling.feature_subset import feature_subsetter
@@ -73,9 +72,13 @@ plot_shap_beeswarm(shap=shap, X=X_test_final)
 |---------|---------|---------|
 | <img width="300" height="200" alt="trend" src="https://github.com/user-attachments/assets/681c7cb2-b071-43fa-8c67-2ec066a8c10c" /> | <img width="300" height="200" alt="knee" src="https://github.com/user-attachments/assets/4323badf-4738-454a-9c2f-e992f4dec9fd" /> | <img width="300" height="200" alt="shap" src="https://github.com/user-attachments/assets/1bb43a22-9186-422e-b18f-6faf59e9c68c" /> |
 
+Check the __Google Colab Notebook__ for an example of the modeling pipeline with finer controls over the runtime parameters.
+
+[![IEL Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18scyVDA3VtMxgG9wDV5cxV39OO8gRYIP?usp=sharing)
+
 # ⚙️ Data Preprocessing Pipelines (Optional) #
 
-In the manuscript "Predicting the onset of internalizing disorders in early adolescence using deep learning optimized with AI" (under review), we proposed a data preprocessing pipeline before performing IEL model fitting. This pipeline includes methods that remove variables with too many missing values, partition data for training/testing purposes, winsorize and scale data to avoid potential graident explosion/vanishing problems, impute data to ensure feasibility of modeling, select feature subsets to enhance model runtime performance and parismony.  
+In the manuscript "Predicting the onset of internalizing disorders in early adolescence using deep learning optimized with AI" (under review), we proposed a data preprocessing pipeline before performing IEL model fitting. This pipeline includes methods that remove variables with too many missing values, partition data for training/test purposes, winsorize and scale data to avoid potential graident explosion/vanishing problems, impute data to ensure feasibility of modeling, and select feature subsets to enhance model runtime performance and parismony.  
 
 This section delineates the preprocessing pipeline with executable Python scripts (stored in `IEL/Preprocessing/`). While this README only provides high-level descriptions, users are recommended to consult each script's _docstring_ for comprehensive explanations and the _Test run_ section for usage examples.  
 
@@ -87,11 +90,11 @@ This section delineates the preprocessing pipeline with executable Python script
 |4.|`P4_Winsorizing.py`|`winsorize`|Clip continuous/ordinal variables to a user-defined range of values.| Training & test, independently| 
 |5.|`P5_Scaling.py`|`minMaxScale`|Scale variables to a specified range (e.g., [0, 1]) using min-max normalization.| Training & test, independently| 
 |6.|`P6_Imputation.py`|`impute_nnmf` & `impute_mice`|Perform imputation via Non-Negative Matrix Factorization (NNMF), with both sklearn and a 5x faster custom PyTorch version, and via Multiple Imputation by Chained Equations (MICE).| Training & test, independently| 
-|7.|`P7_Feature_Filtering.py`|`feat_filter`|Identify features with a zero test statistic with the target from three different statistical tests: (a) mutual information (for all features), (b) chi-squared (for binary features), and (c) ANOVA (for continuous and ordinal features).| Training only |
-|8.|`P8_LASSO_Feature_Selection_IEL`|`LASSO_IEL_Classifier`|Using the Least Absolute Shrinkage and Selection Operator (LASSO), we use L1-regularized logistic regression to perform feature selection. Since the regression problem is sensitive to the value of the L1-regularization term α, we adopt IEL to optimize the value of α.| Training only |
+|7.|`P7_Feature_Filtering.py`|`feat_filter`|Filter out features with a zero test statistic with the target from three different statistical tests: (a) mutual information (for all features), (b) chi-squared (for binary features), and (c) ANOVA (for continuous and ordinal features).| Training only |
+|8.|`P8_LASSO_Feature_Selection_IEL`|`LASSO_IEL_Classifier`|Use L1-regularized logistic regression to perform feature selection. Since the regression problem is sensitive to the L1-regularization term α, we adopt IEL to optimize the value of α.| Training only |
 |9.|`P9_Boruta_Feature_Selection.py`|`BorutaClass`|Implement Boruta, an ensemble-based feature selection method using random forests. This version supports multiple hyperparameter configurations and is optimized over the original [BorutaPy implementation](https://github.com/scikit-learn-contrib/boruta_py).| Training only |
 
-The __Used on__ column above indicates when to apply the class/function. Starting with the removal of features with too many missing values in step 1, we partition the full feature dataset into a training set and a test set in step 2, then apply steps 3-6 to the training and test sets separately. Subsequently, we apply step 7 to subset the training feature dataset X<sub>train</sub> in step 7, and apply steps 8 and 9 independently on X<sub>train</sub>. In the manuscript, we identify the union of the features selected by steps 8 and 9 to form the preprocessed feature dataset. Finally, we subset the test feature dataset with the same feature subset in the preprocessed feature dataset for subseqeunt model evaluation. 
+The __Used on__ column above indicates when to apply the class/function. Starting with the removal of features with too many missing values in step 1 on the full feature dataset, we partition it into a training set and a test set in step 2, then apply steps 3-6 to the training and test sets separately. Subsequently, we apply step 7 to subset the training feature dataset X<sub>train</sub> in step 7, and apply steps 8 and 9 independently on X<sub>train</sub>. In the manuscript, we identify the union of the features selected by steps 8 and 9 to form the preprocessed feature dataset to reduce the risk of neglecting purely linear/nonlinear features and multicollinearity. Finally, the test feature dataset is filtered with the same feature subset in the preprocessed feature dataset for subseqeunt model evaluation. 
 
 <!-- # :book: References #
 Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).-->
