@@ -1,0 +1,136 @@
+########################################################################################################################
+# Apache License 2.0
+########################################################################################################################
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Copyright 2025 Nina de Lacy
+########################################################################################################################
+
+########################################################################################################################
+# Overview: This script uses (a) mutual information, (b) chi-square, and (c) ANOVA test to filter out features which
+# have a zero coefficient with the target.
+########################################################################################################################
+
+########################################################################################################################
+# Import packages
+########################################################################################################################
+import numpy as np
+import pandas as pd
+import warnings
+from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.simplefilter(action='ignore', category=pd.errors.SettingWithCopyWarning)
+
+########################################################################################################################
+# Define the function for feature filtering using mutual information, chi-squared, and ANOVA tests.
+########################################################################################################################
+
+
+def feat_filter(df_X: pd.DataFrame,
+                y: np.ndarray,
+                bin_feats: list[str],
+                cont_ord_feats: list[str]):
+    """
+    :param df_X: A pandas.DataFrame.
+           The training feature dataset with each column as a feature.
+    :param y: A numpy.ndarray.
+           The 1-dimensional numpy array representing the target in the training set.
+    :param bin_feats: A list of strings.
+           The names of the binary features in df_X.
+    :param cont_ord_feats: A list of strings.
+           The names of the continuous/ordinal features in df_X.
+    :return: df_score: A pandas.DataFrame with the following columns:
+    - 'Feature_Name': The names of the features.
+    - 'MI_score': The mutual information test statistic for each feature.
+    - 'Chi2_score': The chi-squared test statistic for each feature.
+    - 'ANOVA_score': The ANOVA test statistic for each feature.
+    - 'Removal': A binary (0, 1) column with value 1 indicating that a feature has the non-NaN sum from the 3 tests as
+       zero, thus should be removed.
+    """
+    # Type and value check
+    assert isinstance(df_X, pd.DataFrame), 'df_X must be a pandas.DataFrame.'
+    assert isinstance(y, np.ndarray) and len(y.shape) == 1, 'y must be a 1-dimensional numpy.ndarray.'
+    assert y.shape[0] == df_X.shape[0], 'The dimension of df_X (in the 1st dimension) does not match the length of y.'
+    for feats_type_idx, feats_type in enumerate([bin_feats, cont_ord_feats]):
+        feats_type_name = 'bin_feats' if feats_type_idx == 0 else 'cont_ord_feats'
+        assert isinstance(feats_type, list), f'{feats_type_name} must be a list.'
+        for feat in feats_type:
+            assert isinstance(feat, str) and feat in df_X.columns, (f'Every element in {feats_type_name} must be a '
+                                                                    f'string and exists as a column in df_X.')
+
+    ####################################################################################################################
+    # Step 1. Mutual information test.
+    ####################################################################################################################
+    mi_coef: np.ndarray = mutual_info_classif(df_X, y)
+    df_score: pd.DataFrame = pd.DataFrame({'Feature_Name': df_X.columns, 'MI_score': mi_coef})
+
+    ####################################################################################################################
+    # Step 2. Chi-squared test for binary variables.
+    ####################################################################################################################
+    chi2_stats: np.ndarray = chi2(df_X[bin_feats], y)[0]
+    chi2_stats = np.nan_to_num(chi2_stats, nan=0)
+    for i in range(len(bin_feats)):
+        df_score.loc[df_score['Feature_Name'] == bin_feats[i], 'Chi2_score'] = chi2_stats[i]
+
+    ####################################################################################################################
+    # Step 3. ANOVA test for continuous/ordinal variables.
+    ####################################################################################################################
+    f_stats: np.ndarray = f_classif(df_X[cont_ord_feats], y)[0]
+    f_stats = np.nan_to_num(f_stats, nan=0)
+    for i in range(len(cont_ord_feats)):
+        df_score.loc[df_score['Feature_Name'] == cont_ord_feats[i], 'ANOVA_score'] = f_stats[i]
+
+    ####################################################################################################################
+    # Step 4. Obtain overall judgments from the tests.
+    ####################################################################################################################
+    df_score['Removal'] = pd.Series((df_score['MI_score'].fillna(0).abs() +
+                                     df_score['Chi2_score'].fillna(0).abs() +
+                                     df_score['ANOVA_score'].fillna(0).abs()) == 0).astype('Int32')
+
+    ####################################################################################################################
+    # Step 5. Return df_score to show the filtering result.
+    ####################################################################################################################
+    return df_score
+
+
+########################################################################################################################
+# Test run
+########################################################################################################################
+if __name__ == '__main__':
+
+    from sklearn.datasets import make_classification
+    np.random.seed(42)
+
+    # Step 1: Generate continuous features with make_classification
+    X, y_ = make_classification(n_samples=100,
+                                n_features=50,
+                                n_informative=10,
+                                n_redundant=40,
+                                n_clusters_per_class=2,
+                                random_state=42)
+
+    # Step 2: Add binary features separately
+    X_binary = np.random.binomial(1, 0.7, size=(100, 50))
+
+    # Step 3: Concatenate continuous and binary features
+    df_X_: pd.DataFrame = pd.DataFrame(np.hstack([X, X_binary]), columns=[f'X{i}' for i in range(1, 101)])
+
+    # Step 4: Run feature filtering
+    df_score_ = feat_filter(df_X=df_X_, y=y_, bin_feats=[f'X{i}' for i in range(51, 101)],
+                            cont_ord_feats=[f'X{i}' for i in range(1, 51)])
+
+    # Step 5: Identify features that should be removed
+    feats_to_remove = df_score_.loc[df_score_['Removal'] == 1, 'Feature_Name'].to_list()
+    print(f'Features to be removed: {feats_to_remove}')
+
