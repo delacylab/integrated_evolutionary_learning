@@ -79,17 +79,19 @@ In the manuscript "Predicting the onset of internalizing disorders in early adol
 
 This section delineates the preprocessing pipeline with executable Python scripts (stored in `IEL/Preprocessing/`). While this README only provides high-level descriptions, users are recommended to consult each script's _docstring_ for comprehensive explanations and the _Test run_ section for usage examples.  
 
-| | Script | Class/Function | Description |
-|---------|---------|---------|---------|
-|1.|`P1_NaN_Thresholding.py`|`remove_null`|Remove variables with a missing value percentage above a user-defined threshold.|
-|2.|`P2_Partitioning.py`|`partitioning`|Split a dataset into training and test sets for model fitting and evaluation.|
-|3.|`P3_Sample_Balancing.py`|`sample_balancing`|Balance a binary target variable, optionally matching samples by a secondary variable (e.g., gender).|  
-|4.|`P4_Winsorizing.py`|`winsorize`|Clip continuous/ordinal variables to a user-defined range of values.|
-|5.|`P5_Scaling.py`|`minMaxScale`|Scale variables to a specified range (e.g., [0, 1]) using min-max normalization.|
-|6.|`P6_Imputation.py`|`impute_nnmf` & `impute_mice`|Perform imputation via Non-Negative Matrix Factorization (NNMF), with both sklearn and a 5x faster custom PyTorch version, and via Multiple Imputation by Chained Equations (MICE).|
-|7.|`P7_Feature_Filtering.py`|`feat_filter`|Identify features with a zero test statistic with the target from three different statistical tests: (a) mutual information (for all features), (b) chi-squared (for binary features), and (c) ANOVA (for continuous and ordinal features).|
-|8.| | |LASSO-IEL (to be updated)|
-|9.|`P9_Boruta_Feature_Selection.py`|`BorutaClass`|Implement Boruta, an ensemble-based feature selection method using random forests. This version supports multiple hyperparameter configurations and is optimized over the original [BorutaPy implementation](https://github.com/scikit-learn-contrib/boruta_py).|
+| | Script | Class/Function | Description | Used on |
+|---------|---------|---------|---------|---------|
+|1.|`P1_NaN_Thresholding.py`|`remove_null`|Remove variables with a missing value percentage above a user-defined threshold.| Full |
+|2.|`P2_Partitioning.py`|`partitioning`|Split a dataset into training and test sets for model fitting and evaluation.| Full |
+|3.|`P3_Sample_Balancing.py`|`sample_balancing`|Balance a binary target variable, optionally matching samples by a secondary variable (e.g., gender).| Training & test, independently| 
+|4.|`P4_Winsorizing.py`|`winsorize`|Clip continuous/ordinal variables to a user-defined range of values.| Training & test, independently| 
+|5.|`P5_Scaling.py`|`minMaxScale`|Scale variables to a specified range (e.g., [0, 1]) using min-max normalization.| Training & test, independently| 
+|6.|`P6_Imputation.py`|`impute_nnmf` & `impute_mice`|Perform imputation via Non-Negative Matrix Factorization (NNMF), with both sklearn and a 5x faster custom PyTorch version, and via Multiple Imputation by Chained Equations (MICE).| Training & test, independently| 
+|7.|`P7_Feature_Filtering.py`|`feat_filter`|Identify features with a zero test statistic with the target from three different statistical tests: (a) mutual information (for all features), (b) chi-squared (for binary features), and (c) ANOVA (for continuous and ordinal features).| Training only |
+|8.| | |LASSO-IEL (to be updated)| Training only |
+|9.|`P9_Boruta_Feature_Selection.py`|`BorutaClass`|Implement Boruta, an ensemble-based feature selection method using random forests. This version supports multiple hyperparameter configurations and is optimized over the original [BorutaPy implementation](https://github.com/scikit-learn-contrib/boruta_py).| Training only |
+
+The __Used on__ column above indicates when to apply the class/function. Starting with the removal of features with too many missing values in step 1, we partition the full feature dataset into a training set and a test set in step 2, then apply steps 3-6 to the training and test sets separately. Subsequently, we apply step 7 to subset the training feature dataset X<sub>train</sub> in step 7, and apply steps 8 and 9 independently on X<sub>train</sub>. In the manuscript, we identify the union of the features selected by steps 8 and 9 to form the preprocessed feature dataset, and we subset the test feature dataset with the same feature subset for subseqeunt model evaluation. 
 
 # :book: References #
 Loshchilov, I., & Hutter, F. (2019). Decoupled weight decay regularization. In _Proceedings of the International Conference on Learning Representations (ICLR)_. [https://arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101).
