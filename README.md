@@ -1,10 +1,10 @@
 <div align="right">
-  Last update: 2025 September 4, 15:58 MT (by Wayne Lam)
+  Last update: 2025 September 8, 11:35 MT (by Wayne Lam)
 </div>
 <hr>
 
 # :crystal_ball: Integrated Evolutionary Learning #
-Our novel approach Integrated Evolutionary Learning (IEL) provides an automated method for simultaneously accomplishing principled feature selection and hyperparameter tuning while furnishing interpretable models where the original features used to make predictions may be obtained and ranked in order of importance, even in deep learning with artificial neural networks. In this approach, the machine learning algorithm of choice is nested inside an evolutionary algorithm which selects features and hyperparameters over generations on the basis of an information function to converge on an optimal solution.
+Integrated Evolutionary Learning (IEL) provides an automated method for simultaneously accomplishing principled feature selection and hyperparameter tuning while furnishing interpretable models where the original features used to make predictions may be obtained and ranked in order of importance, even in deep learning with artificial neural networks. In this approach, the machine learning algorithm of choice is nested inside an evolutionary algorithm which selects features and hyperparameters over generations on the basis of an information function to converge on an optimal solution.
 
 # :paperclip: Characteristics # 
 * Adopt the [AdamW optimizer](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) for stable back-propagation in deep-learning 
